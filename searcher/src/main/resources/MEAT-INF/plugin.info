@@ -1,0 +1,9 @@
+{
+  "name": "Searcher",
+  "domains": {
+    "DOC": "HEAD",
+    "INDEX": "BODY"
+  },
+  "order": 0,
+  "dependencies": []
+}

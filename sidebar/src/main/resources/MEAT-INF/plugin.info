@@ -1,0 +1,9 @@
+{
+  "name": "SearcherIndex",
+  "domains": {
+    "DOC": "BODY",
+    "INDEX": "BODY"
+  },
+  "order": 999,
+  "dependencies": ["Sidebar", "Searcher"]
+}

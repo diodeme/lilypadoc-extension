@@ -1,0 +1,4 @@
+.sidebar-active {
+    @apply text-sky-600;
+    @apply font-semibold;
+}

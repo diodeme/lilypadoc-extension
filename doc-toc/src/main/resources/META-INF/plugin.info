@@ -1,0 +1,8 @@
+{
+  "name": "DocToc",
+  "domains": {
+    "DOC": "RIGHT_ASIDE"
+  },
+  "order": 2,
+  "dependencies": ["ApiHubDoc"]
+}

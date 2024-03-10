@@ -1,0 +1,8 @@
+rootProject.name = 'lilypadoc-extension'
+include 'api-doc'
+include 'doc-toc'
+include 'file-based-selector'
+include 'searcher'
+include 'searcher-index'
+include 'sidebar'
+

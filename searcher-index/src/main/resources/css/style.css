@@ -1,0 +1,41 @@
+#search-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    z-index: 1000;
+    opacity: 0;
+}
+
+#search-alert.fade {
+    animation: fadeOut 0.7s ease forwards; /* 定义动画效果，持续时间，过渡方式，过渡效果如何结束 */
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; } /* 动画开始时元素不透明 */
+    100% { opacity: 0; } /* 动画结束时元素完全透明并保持 */
+}
+
+#search-alert.show {
+    opacity: 1;
+    top: 0;
+}
+
+.alert-outer {
+    @apply flex;
+    @apply w-full;
+    @apply justify-center;
+    @apply items-center;
+}
+
+.alert-box {
+    @apply w-1/3;
+    @apply border-2;
+}
+
+.alert-link {
+    @apply font-semibold;
+    @apply hover:underline;
+}

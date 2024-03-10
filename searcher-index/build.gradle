@@ -1,0 +1,5 @@
+dependencies {
+    compileOnly 'com.diode.lilypadoc.extension:sidebar:0.0.1-SNAPSHOT'
+    compileOnly 'com.diode.lilypadoc.extension:searcher:0.0.1-SNAPSHOT'
+    implementation 'org.slf4j:slf4j-api:2.0.4'
+}

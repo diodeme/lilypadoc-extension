@@ -1,0 +1,122 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        repositories {
+            maven {
+                allowInsecureProtocol = true
+                url = "http://192.168.50.72:8081/repository/maven-public/"
+            }
+            maven {
+                allowInsecureProtocol = true
+                url = "http://192.168.50.72:8081/repository/gradle-plugin-public/"
+            }
+        }
+    }
+    dependencies {
+        classpath "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:7.1.2"
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+allprojects {
+    group 'com.diode.lilypadoc.extension'
+    version '0.0.1-SNAPSHOT'
+
+    ext {
+        profile = "dev"
+    }
+}
+
+subprojects { subProject ->
+    // 在shadowJar任务配置中引用子项目的名称和版本
+    subProject.tasks.withType(ShadowJar) {
+        archiveClassifier.set('')
+        archiveBaseName.set(subProject.name)
+        archiveVersion.set(subProject.version)
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: "maven-publish"
+    apply plugin: "com.github.johnrengelman.shadow"
+
+    java {
+//        withJavadocJar()
+        withSourcesJar()
+    }
+
+
+    publishing {
+        repositories {
+            maven {
+                name = "nexus"
+                credentials(PasswordCredentials)
+                allowInsecureProtocol = true
+                def releasesRepoUrl = "http://192.168.50.72:8081/repository/maven-releases/"
+                def snapshotsRepoUrl = "http://192.168.50.72:8081/repository/maven-snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+        publications {
+            mavenJava(MavenPublication) {
+                from project.components.java
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+                pom {
+                    name = "lilypadoc"
+                    description = ""
+                    url = ""
+                    inceptionYear = "2023"
+
+                    developers {
+                        developer {
+                            id = "diode"
+                            name = "diode"
+                            email = "diodemeu@gmail.com"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    compileJava {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
+        implementation 'com.diode.lilypadoc:lilypadoc-standard:0.0.1-SNAPSHOT'
+    }
+
+    repositories {
+        maven {
+            allowInsecureProtocol = true
+            url = "http://192.168.50.72:8081/repository/maven-public/"
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

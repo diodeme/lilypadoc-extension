@@ -1,0 +1,8 @@
+{
+  "name": "ApiHubDoc",
+  "domains": {
+    "DOC": "BODY"
+  },
+  "order": 1,
+  "dependencies": []
+}

@@ -1,0 +1,8 @@
+{
+  "name": "FileBasedSelector",
+  "domains": {
+    "DOC": "HEAD"
+  },
+  "order": 1,
+  "dependencies": []
+}
