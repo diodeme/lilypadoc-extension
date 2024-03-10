@@ -2,6 +2,7 @@ package com.diode.lilypadoc.extension.searcherIndex;
 
 import com.diode.lilypadoc.extension.searcher.domain.CustomConfig;
 import com.diode.lilypadoc.extension.searcherIndex.domain.Index;
+import com.diode.lilypadoc.extension.sidebar.domain.Sides;
 import com.diode.lilypadoc.standard.api.IHttpCall;
 import com.diode.lilypadoc.standard.api.ILilypadocComponent;
 import com.diode.lilypadoc.standard.api.ITemplate;

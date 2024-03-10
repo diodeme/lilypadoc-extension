@@ -1,9 +1,8 @@
 {
-  "name": "SearcherIndex",
+  "name": "Sidebar",
   "domains": {
-    "DOC": "BODY",
-    "INDEX": "BODY"
+    "DOC": "LEFT_ASIDE"
   },
-  "order": 999,
-  "dependencies": ["Sidebar", "Searcher"]
+  "order": 1,
+  "dependencies": []
 }
