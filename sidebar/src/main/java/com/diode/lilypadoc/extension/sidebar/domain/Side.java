@@ -45,10 +45,11 @@ public class Side {
         if (hasChild()) {
             String formatDir;
             if (isRoot) {
-                formatDir = "<summary class=\"font-semibold text-base\">%s</summary>\n"
-                        + "<ul>\n"
-                        + "%s"
-                        + "</ul>\n";
+                formatDir = """
+                        <summary class="font-semibold text-base">%s</summary>
+                        <ul>
+                        %s</ul>
+                        """;
             } else {
                 formatDir = "<details " + (isActive(activePath) ? "open" : "close") + ">\n"
                         + "<summary " + (isActive(activePath) ? "class=\"sidebar-active\"" : "")

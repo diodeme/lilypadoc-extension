@@ -10,6 +10,7 @@ import com.diode.lilypadoc.standard.domain.LilypadocContext;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.tables.*;
 import com.vladsch.flexmark.ext.toc.TocExtension;
+import com.vladsch.flexmark.html.renderer.HeaderIdGenerator;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
@@ -49,6 +50,8 @@ public class ApiDoc extends FactoryPlugin {
 
         try (FileReader fileReader = new FileReader(lilypadocContext.getDoc())) {
             Node document = parser.parseReader(fileReader);
+            HeaderIdGenerator headerIdGenerator = new HeaderIdGenerator.Factory().create();
+            headerIdGenerator.generateIds(document.getDocument());
             doc.setDocument(document);
         } catch (Exception e) {
             log.error("解析文档异常，path:{}", lilypadocContext.getDocRPath(), e);
@@ -61,8 +64,7 @@ public class ApiDoc extends FactoryPlugin {
 
         @Override
         public void process(@NotNull NodeTracker state, @NotNull Node node) {
-            if (node instanceof TableHead) {
-                TableHead cell = (TableHead) node;
+            if (node instanceof TableHead cell) {
                 CopyButton copyButton = new CopyButton();
                 cell.prependChild(copyButton);
             }

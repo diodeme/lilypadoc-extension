@@ -47,13 +47,12 @@ public class Toc implements ILilypadocComponent {
     public Html parse() {
         Html recursion = recursion();
         String template =
-                "<div class=\"fixed items-start justify-start overflow-auto thin-scrollbar\"\n"
-                        + "     id=\"toc\">\n"
-                        + "<ul>\n"
-                        + "     class=\"menu menu-sm text-gray-500 border-l border-0.1\">\n"
-                        + "%s"
-                        + "     </ul>\n"
-                        + "</div>";
+                """
+                <div class="fixed items-start justify-start overflow-auto thin-scrollbar"
+                id="toc">
+                <ul class="menu menu-sm text-gray-500 border-l border-0.1">
+                %s</ul>
+                </div>""";
         return new Html().element(new Text(String.format(template, recursion.parse())));
     }
 

@@ -33,15 +33,13 @@ public class DocToc extends FactoryPlugin {
 
     @Override
     protected Result<List<ILilypadocComponent>> process(LilypadocContext lilypadocContext, Map<String, List<ILilypadocComponent>> dependencies) {
-        List<ILilypadocComponent> componentList = dependencies.get("apiHubDoc");
+        List<ILilypadocComponent> componentList = dependencies.get("ApiDoc");
         if(Objects.isNull(componentList) || !(componentList.get(0) instanceof Doc)){
-            return Result.fail(StandardErrorCodes.BIZ_ERROR.of("DocToc插件仅接收ApiHubDoc组件"));
+            return Result.fail(StandardErrorCodes.BIZ_ERROR.of("DocToc插件仅接收ApiDoc组件"));
         }
         ILilypadocComponent component = componentList.get(0);
         Toc toc = new Toc();
         Node document = ((Doc) component).getDocument();
-        HeaderIdGenerator headerIdGenerator = new Factory().create();
-        headerIdGenerator.generateIds(document.getDocument());
         genToc(document, toc, new HashMap<>());
         Toc next = toc.getNext();
         List<ILilypadocComponent> res;
@@ -60,8 +58,7 @@ public class DocToc extends FactoryPlugin {
         if (!node.hasChildren() && Objects.nonNull(node.getNext())) {
             return;
         }
-        if (node instanceof Heading) {
-            Heading heading = (Heading) node;
+        if (node instanceof Heading heading) {
             Toc tempToc = new Toc(heading);
             int headingLevel = heading.getLevel();
             int tocLevel = toc.getLevel();
