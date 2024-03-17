@@ -4,5 +4,5 @@
     "DOC": "RIGHT_ASIDE"
   },
   "order": 2,
-  "dependencies": ["ApiHubDoc"]
+  "dependencies": ["ApiDoc"]
 }
