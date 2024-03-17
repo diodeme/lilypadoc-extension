@@ -23,7 +23,7 @@ public class FileBasedSelector extends FactoryPlugin {
     }
 
     @Override
-    public Result<List<ILilypadocComponent>> process(LilypadocContext markupContext,
+    public Result<List<ILilypadocComponent>> process(LilypadocContext lilypadocContext,
                                                      Map<String, List<ILilypadocComponent>> dependencies) {
         Result<CustomConfig> result = getCustomConfig(CustomConfig.class);
         if (result.isFailed()) {
@@ -37,18 +37,18 @@ public class FileBasedSelector extends FactoryPlugin {
         }
         List<ILilypadocComponent> componentList = new ArrayList<>(fileCateMap.size());
         fileCateMap.forEach((k, v) -> {
-            Result<File> categoryDirResult = FileTool.getCategoryDir(markupContext.getDoc(), markupContext.getDocRootDir(), v);
+            Result<File> categoryDirResult = FileTool.getCategoryDir(lilypadocContext.getDoc(), lilypadocContext.getDocRootDir(), v);
             if (categoryDirResult.isFailed()) {
-                log.warn("doc:{} root:{} 指定的层级:{} 不存在", markupContext.getDocRPath(), markupContext.getDocRootDir(), v);
+                log.warn("doc:{} root:{} 指定的层级:{} 不存在", lilypadocContext.getDocRPath(), lilypadocContext.getDocRootDir(), v);
                 return;
             }
             File categoryDir = categoryDirResult.get();
-            List<Option> options = getOptionList(categoryDir, markupContext.getDocRPath(), markupContext.getDocRootDir());
+            List<Option> options = getOptionList(categoryDir, lilypadocContext.getDocRPath(), lilypadocContext.getDocRootDir());
             Selector selector = new Selector();
             selector.setName(k);
             selector.setOptions(options);
-            selector.setActiveOption(new Option(categoryDir.getName(), markupContext.getDocRPath()));
-            selector.setHtmlDocPath(markupContext.getHtmlDocRPath());
+            selector.setActiveOption(new Option(categoryDir.getName(), lilypadocContext.getDocRPath()));
+            selector.setHtmlDocPath(lilypadocContext.getHtmlDocRPath());
             componentList.add(selector);
         });
         return Result.ok(componentList);

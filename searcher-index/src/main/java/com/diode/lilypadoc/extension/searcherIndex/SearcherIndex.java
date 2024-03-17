@@ -139,10 +139,10 @@ public class SearcherIndex extends BehaviourPlugin<PageSyncFinishEvent> implemen
     }
 
     public boolean judgeMaxPath(Integer targetSearchCateDepth, String targetSearchCateName,
-                                LilypadocContext markupContext) {
-        Integer categoryDepth = markupContext.getCategoryDepth();
+                                LilypadocContext lilypadocContext) {
+        Integer categoryDepth = lilypadocContext.getCategoryDepth();
         StringBuilder path = new StringBuilder();
-        MPath category = markupContext.getLastCategory();
+        MPath category = lilypadocContext.getLastCategory();
         for (int i = categoryDepth; i > targetSearchCateDepth; i--) {
             String name = category.getName();
             path.insert(0, name);
@@ -157,23 +157,23 @@ public class SearcherIndex extends BehaviourPlugin<PageSyncFinishEvent> implemen
         return false;
     }
 
-    public synchronized ErrorCode syncIndex(LilypadocContext markupContext, Integer targetCate,
+    public synchronized ErrorCode syncIndex(LilypadocContext lilypadocContext, Integer targetCate,
                                             MPath htmlRootPath, String indexContent) {
-        Result<File> categoryDirResult = FileTool.getCategoryDir(markupContext.getDoc(), markupContext.getDocRootDir(), targetCate);
+        Result<File> categoryDirResult = FileTool.getCategoryDir(lilypadocContext.getDoc(), lilypadocContext.getDocRootDir(), targetCate);
         if (categoryDirResult.isFailed()) {
-            log.warn("doc:{} root:{} 指定的层级{}不存在", markupContext.getDocRPath(), markupContext.getDocRootDir(), targetCate);
+            log.warn("doc:{} root:{} 指定的层级{}不存在", lilypadocContext.getDocRPath(), lilypadocContext.getDocRootDir(), targetCate);
             return StandardErrorCodes.OK;
         }
         File categoryDir = categoryDirResult.get();
         //判断是否是最大的路径（按string排序，是的话才会去更新index页）
-        boolean needRefresh = judgeMaxPath(targetCate, categoryDir.getName(), markupContext);
+        boolean needRefresh = judgeMaxPath(targetCate, categoryDir.getName(), lilypadocContext);
         if (!needRefresh) {
             return StandardErrorCodes.OK;
         }
-        MPath mPath = htmlRootPath.appendChild(markupContext.getHtmlDocRPath()).appendChild(
-                MPath.of(categoryDir.getPath()).remove(markupContext.getDocRootDir()));
+        MPath mPath = htmlRootPath.appendChild(lilypadocContext.getHtmlDocRPath()).appendChild(
+                MPath.of(categoryDir.getPath()).remove(lilypadocContext.getDocRootDir()));
         String indexPath = mPath.appendChild(INDEX_HTML).toString();
-        log.info("SearcherIndex插件开始同步索引页面，indexPath:{} curDoc:{}", indexPath, markupContext.getDocRPath());
+        log.info("SearcherIndex插件开始同步索引页面，indexPath:{} curDoc:{}", indexPath, lilypadocContext.getDocRPath());
         ErrorCode indexErrorCode = FileTool.writeStringToFile(indexPath, indexContent);
         if (StandardErrorCodes.OK.notEquals(indexErrorCode)) {
             log.error("SearcherIndex插件生成索引页面失败");
