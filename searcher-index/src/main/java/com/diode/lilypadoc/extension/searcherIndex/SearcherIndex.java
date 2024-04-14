@@ -79,7 +79,7 @@ public class SearcherIndex extends BehaviourPlugin<PageSyncFinishEvent> implemen
         if (Objects.isNull(sideBarPlugin) || Objects.isNull(sides)) {
             return StandardErrorCodes.BIZ_ERROR.of("SearcherIndex插件未获取到sidebar组件");
         }
-        Result<CustomConfig> result = searcherPlugin.getCustomConfig(CustomConfig.class);
+        Result<CustomConfig> result = searcherPlugin.getCustomConfig();
         if (result.isFailed()) {
             return result.errorCode();
         }
@@ -93,8 +93,7 @@ public class SearcherIndex extends BehaviourPlugin<PageSyncFinishEvent> implemen
         List<Pair<AbstractPlugin, List<ILilypadocComponent>>> pairList = new ArrayList<>();
         pairList.add(new Pair<>(searcherPlugin, searchBoxList));
         //此处未来可以扩展的插件
-        Result<com.diode.lilypadoc.extension.searcherIndex.domain.CustomConfig> searcherIndexCustomConfig = getCustomConfig(
-                com.diode.lilypadoc.extension.searcherIndex.domain.CustomConfig.class);
+        Result<com.diode.lilypadoc.extension.searcherIndex.domain.CustomConfig> searcherIndexCustomConfig = getCustomConfig();
         if (searcherIndexCustomConfig.isFailed()) {
             return searcherIndexCustomConfig.errorCode();
         }
@@ -209,8 +208,7 @@ public class SearcherIndex extends BehaviourPlugin<PageSyncFinishEvent> implemen
         }
         Map<String, String> resMap = new HashMap<>();
         resMap.put("targetPath", targetPath);
-        Result<com.diode.lilypadoc.extension.searcherIndex.domain.CustomConfig> searcherIndexCustomConfig = getCustomConfig(
-                com.diode.lilypadoc.extension.searcherIndex.domain.CustomConfig.class);
+        Result<com.diode.lilypadoc.extension.searcherIndex.domain.CustomConfig> searcherIndexCustomConfig = getCustomConfig();
         if (searcherIndexCustomConfig.isFailed()) {
             return Result.fail(searcherIndexCustomConfig.errorCode());
         }

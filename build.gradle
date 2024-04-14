@@ -5,11 +5,11 @@ buildscript {
         repositories {
             maven {
                 allowInsecureProtocol = true
-                url = "http://diodemeu.asuscomm.com:4781/repository/maven-public/"
+                url = 'https://maven.aliyun.com/repository/public'
             }
             maven {
                 allowInsecureProtocol = true
-                url = "http://diodemeu.asuscomm.com:4781/repository/gradle-plugin-public/"
+                url = "https://maven.aliyun.com/repository/gradle-plugin"
             }
         }
     }
@@ -20,6 +20,23 @@ buildscript {
 
 plugins {
     id 'java'
+}
+
+static def repositoryDomain() {
+    return "http://diode.blue:4781";
+//    return "http://192.168.50.72:8081";
+}
+
+def getRepositoryPublic() {
+    return repositoryDomain() + project.findProperty('repository.public.url')
+}
+
+def getRepositoryRelease() {
+    return repositoryDomain() + project.findProperty('repository.release.url')
+}
+
+def getRepositorySnapshot() {
+    return repositoryDomain() + project.findProperty('repository.snapshot.url')
 }
 
 allprojects {
@@ -57,9 +74,7 @@ subprojects { subProject ->
                 name = "nexus"
                 credentials(PasswordCredentials)
                 allowInsecureProtocol = true
-                def releasesRepoUrl = "http://diodemeu.asuscomm.com:4781/repository/maven-releases/"
-                def snapshotsRepoUrl = "http://diodemeu.asuscomm.com:4781/repository/maven-snapshots/"
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                url = version.endsWith('SNAPSHOT') ? getRepositorySnapshot() : getRepositoryRelease()
             }
         }
         publications {
@@ -102,13 +117,13 @@ subprojects { subProject ->
     dependencies {
         compileOnly 'org.projectlombok:lombok:1.18.24'
         annotationProcessor 'org.projectlombok:lombok:1.18.24'
-        implementation 'com.diode.lilypadoc:lilypadoc-standard:0.0.1-SNAPSHOT'
+        compileOnly 'com.diode.lilypadoc:lilypadoc-standard:0.0.1-SNAPSHOT'
     }
 
     repositories {
         maven {
             allowInsecureProtocol = true
-            url = "http://diodemeu.asuscomm.com:4781/repository/maven-public/"
+            url getRepositoryPublic()
         }
     }
 

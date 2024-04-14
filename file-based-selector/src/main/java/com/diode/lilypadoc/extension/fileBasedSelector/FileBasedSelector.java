@@ -25,7 +25,7 @@ public class FileBasedSelector extends FactoryPlugin {
     @Override
     public Result<List<ILilypadocComponent>> process(LilypadocContext lilypadocContext,
                                                      Map<String, List<ILilypadocComponent>> dependencies) {
-        Result<CustomConfig> result = getCustomConfig(CustomConfig.class);
+        Result<CustomConfig> result = getCustomConfig();
         if (result.isFailed()) {
             return Result.fail(result.errorCode());
         }
@@ -73,21 +73,27 @@ public class FileBasedSelector extends FactoryPlugin {
             }
             // 先查包路径一致的，再查名称一致的
             File sameDoc = FileTool.findSameDoc(e,
-                    docPath.substring(0, docPath.indexOf(curSelection) + curSelection.length()), true);
+                    docPath.substring(docPath.indexOf(curSelection) + curSelection.length()), true);
             if (Objects.nonNull(sameDoc)) {
                 option.setRef(MPath.ofHtml(sameDoc.getPath()).remove(rootDir));
                 selectionList.add(option);
                 return;
             }
             // 没有历史文件，跳转目录下第一个文件 目录空不跳转
-            File firstFile = FileTool.findFirstFile(e);
-            if (Objects.isNull(firstFile)) {
+            Result<File> firstFile = FileTool.findFirstFile(e, ".md");
+            if (firstFile.isFailed()) {
                 option.setRef(MPath.ofHtml(docPath));
             } else {
-                option.setRef(MPath.ofHtml(firstFile.getPath()).remove(rootDir));
+                option.setRef(MPath.ofHtml(firstFile.get().getPath()).remove(rootDir));
             }
             selectionList.add(option);
         });
         return selectionList;
+    }
+
+    public static void main(String[] args) {
+        FileBasedSelector fileBasedSelector = new FileBasedSelector();
+        fileBasedSelector.getOptionList(new File("D:\\Projects\\code\\java\\lilypadoc\\.docs\\dirB"),
+                MPath.of("ee.md"), MPath.of("D:\\Projects\\code\\java\\lilypadoc\\.docs"));
     }
 }

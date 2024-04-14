@@ -31,20 +31,22 @@ public class Sidebar extends FactoryPlugin {
         MPath lastCateRPath = docRPath.substring(0,
                 docRPath.indexOf(lastCateFile.getName()) + lastCateFile.getName().length());
         Sides sides = genSides(lastCateFile, lastCateRPath, docRPath, lilypadocContext.getHtmlDocRPath());
-        Result<CustomConfig> result = getCustomConfig(CustomConfig.class);
+        Result<CustomConfig> result = getCustomConfig();
         if (result.isFailed()) {
             return Result.fail(result.errorCode());
         }
         CustomConfig customConfig = result.get();
         Integer titleLevel = customConfig.getCustomTitleLevel();
-        Result<File> categoryDir = FileTool.getCategoryDir(lilypadocContext.getDoc(), lilypadocContext.getDocRootDir(),
-                titleLevel);
-        if(categoryDir.isFailed()){
-            log.warn("doc:{} root:{} 指定的层级:{}不存在", lilypadocContext.getDocRPath(), lilypadocContext.getDocRootDir(), titleLevel);
-            return Result.ok(Collections.singletonList(sides));
+        if (Objects.nonNull(titleLevel)) {
+            Result<File> categoryDir = FileTool.getCategoryDir(lilypadocContext.getDoc(), lilypadocContext.getDocRootDir(),
+                    titleLevel);
+            if (categoryDir.isFailed()) {
+                log.warn("doc:{} root:{} 指定的层级:{}不存在", lilypadocContext.getDocRPath(), lilypadocContext.getDocRootDir(), titleLevel);
+                return Result.ok(Collections.singletonList(sides));
+            }
+            Side side = sides.getSide();
+            side.setTitle(categoryDir.get().getName());
         }
-        Side side = sides.getSide();
-        side.setTitle(categoryDir.get().getName());
         return Result.ok(Collections.singletonList(sides));
     }
 
@@ -57,7 +59,7 @@ public class Sidebar extends FactoryPlugin {
         Side side = new Side(file, level, path);
         File[] files = file.listFiles();
         if (Objects.isNull(files)) {
-            if(!file.getName().endsWith(".md")){
+            if (!file.getName().endsWith(".md")) {
                 return null;
             }
             side.setPath(MPath.ofHtml(path));

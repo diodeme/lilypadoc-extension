@@ -2,7 +2,6 @@ package com.diode.lilypadoc.extension.sidebar.domain;
 
 import com.diode.lilypadoc.standard.domain.MPath;
 import com.diode.lilypadoc.standard.domain.html.Html;
-import com.diode.lilypadoc.standard.domain.html.Tag;
 import com.diode.lilypadoc.standard.domain.html.Text;
 import com.diode.lilypadoc.standard.utils.FileTool;
 import com.diode.lilypadoc.standard.utils.ListTool;
@@ -45,15 +44,18 @@ public class Side {
         if (hasChild()) {
             String formatDir;
             if (isRoot) {
-                formatDir = """
+                formatDir =
+                        """
                         <summary class="font-semibold text-base">%s</summary>
                         <ul>
-                        %s</ul>
+                        %s
+                        </ul>
                         """;
             } else {
                 formatDir = "<details " + (isActive(activePath) ? "open" : "close") + ">\n"
-                        + "<summary " + (isActive(activePath) ? "class=\"sidebar-active\"" : "")
-                        + ">%s</summary>\n"
+                        + "<summary " + (isActive(activePath) ? "class=\"sidebar-active\"" : "") + ">"
+                        + "%s\n"
+                        + "</summary>"
                         + "<ul>\n"
                         + "%s"
                         + "</ul>\n"
@@ -70,7 +72,7 @@ public class Side {
                             MPath.ofHtml(htmlDocRPath.appendChild(path)) + "\">" + title + "</a>";
         }
         String body = String.format(formatParent, content);
-        return new Html().element(new Tag("li").child(new Text(body)));
+        return new Html().element(new Text(body));
     }
 
     @Override

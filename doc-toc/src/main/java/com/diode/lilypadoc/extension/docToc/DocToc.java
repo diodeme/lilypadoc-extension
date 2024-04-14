@@ -8,16 +8,17 @@ import com.diode.lilypadoc.standard.common.Result;
 import com.diode.lilypadoc.standard.common.StandardErrorCodes;
 import com.diode.lilypadoc.standard.domain.LilypadocContext;
 import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.html.renderer.HeaderIdGenerator;
-import com.vladsch.flexmark.html.renderer.HeaderIdGenerator.Factory;
+import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.FileReader;
+import java.util.*;
 
 /**
  * @author diode
@@ -55,7 +56,7 @@ public class DocToc extends FactoryPlugin {
         if (Objects.isNull(node)) {
             return;
         }
-        if (!node.hasChildren() && Objects.nonNull(node.getNext())) {
+        if (!node.hasChildren() && Objects.isNull(node.getNext())) {
             return;
         }
         if (node instanceof Heading heading) {
@@ -81,5 +82,31 @@ public class DocToc extends FactoryPlugin {
         }
         genToc(node.getFirstChild(), toc, levelLast);
         genToc(node.getNext(), toc, levelLast);
+    }
+
+    public static void main(String[] args) {
+        Doc doc = new Doc();
+
+        MutableDataSet options = new MutableDataSet();
+
+        options.set(Parser.EXTENSIONS,
+                Arrays.asList(TocExtension.create(), TablesExtension.create(), StrikethroughExtension.create()));
+
+        // 自定义解析器配置
+        Parser parser = Parser.builder(options).build();
+
+        try (FileReader fileReader = new FileReader("D:\\Projects\\code\\java\\lilypadoc-extension\\doc-toc\\src\\main\\resources\\0.什么是RPC.md")) {
+            Node document = parser.parseReader(fileReader);
+            HeaderIdGenerator headerIdGenerator = new HeaderIdGenerator.Factory().create();
+            headerIdGenerator.generateIds(document.getDocument());
+            doc.setDocument(document);
+        } catch (Exception e) {
+            log.error("error！！！！", e);
+        }
+
+        Map<String, List<ILilypadocComponent>> map = new HashMap<>();
+        map.put("ApiDoc", Collections.singletonList(doc));
+        DocToc docToc = new DocToc();
+        docToc.process(new LilypadocContext(),map);
     }
 }

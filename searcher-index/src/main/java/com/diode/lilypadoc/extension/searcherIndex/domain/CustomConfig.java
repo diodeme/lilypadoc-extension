@@ -8,9 +8,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class CustomConfig extends BaseCustomConfig {
 
-    private String notFoundTitle;
-    private String notFoundTip;
-    private String indexTitle;
-    private String indexTip;
+    private String notFoundTitle = "";
+    private String notFoundTip = "";
+    private String indexTitle = "";
+    private String indexTip = "";
 
 }

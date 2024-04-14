@@ -32,8 +32,8 @@ public class Sides implements ILilypadocComponent {
     public Html parse() {
         String template = """
                 <aside id="sidebar"
-                class="sticky border-r border-0.1 w-1/6 font-medium">
-                <div class="flex flex-col items-center pl-2 pt-6 pb-6 md:flex-row sidebar_header_icon">
+                class="sticky border-r border-0.1 w-1/5 font-medium">
+                <div class="flex flex-col items-center pl-2 pt-4 pb-5 md:flex-row sidebar_header_icon">
                 </div>
                 <ul class="menu menu-md rounded-box text-base overflow-hidden hover:overflow-auto thin-scrollbar"
                 id="sidebar_menu">

@@ -17,7 +17,7 @@ public class Searcher extends FactoryPlugin {
     @Override
     protected Result<List<ILilypadocComponent>> process(LilypadocContext lilypadocContext,
                                                         Map<String, List<ILilypadocComponent>> dependencies) {
-        Result<CustomConfig> result = getCustomConfig(CustomConfig.class);
+        Result<CustomConfig> result = getCustomConfig();
         if (result.isFailed()) {
             return Result.fail(result.errorCode());
         }

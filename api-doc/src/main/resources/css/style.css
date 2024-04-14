@@ -1,0 +1,16 @@
+.prose thead th {
+    position: sticky;
+    top: 0; /* 从视口顶部0像素的地方开始 */
+    z-index: 10; /* 确保thead在其他内容上方 */
+    background-color: oklch(var(--b1));
+}
+
+.prose td {
+    @apply align-middle;
+}
+
+.prose .details td {
+    @apply pl-2;
+    @apply pr-0;
+    @apply py-0;
+}
