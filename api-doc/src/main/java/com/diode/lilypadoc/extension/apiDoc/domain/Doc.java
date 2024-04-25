@@ -4,6 +4,7 @@ import com.diode.lilypadoc.standard.api.ILilypadocComponent;
 import com.diode.lilypadoc.standard.domain.html.Html;
 import com.diode.lilypadoc.standard.domain.html.Text;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
+import com.vladsch.flexmark.ext.tables.TableBlock;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.html.AttributeProvider;
@@ -29,20 +30,27 @@ public class Doc implements ILilypadocComponent {
     @Setter
     private Node document;
 
+    private HtmlRenderer renderer;
+
+    public Doc(){
+        MutableDataSet options = new MutableDataSet();
+        options.set(Parser.EXTENSIONS,
+                Arrays.asList(TocExtension.create(), TablesExtension.create(), StrikethroughExtension.create()));
+
+        // 自定义渲染器配置
+        renderer = HtmlRenderer.builder(options).nodeRendererFactory(new CopyButtonRenderer.Factory())
+//                .nodeRendererFactory(new DetailTableRenderer.Factory()).attributeProviderFactory(new DetailTableAttributeProvider.Factory())
+                .nodeRendererFactory(new TableRender.Factory())
+                .build();
+    }
+
     @Override
     public Html parse() {
         Html html = new Html();
         if (Objects.isNull(document)) {
             return html;
         }
-        MutableDataSet options = new MutableDataSet();
-        options.set(Parser.EXTENSIONS,
-                Arrays.asList(TocExtension.create(), TablesExtension.create(), StrikethroughExtension.create()));
 
-        // 自定义渲染器配置
-        HtmlRenderer renderer = HtmlRenderer.builder(options).nodeRendererFactory(new CopyButtonRenderer.Factory())
-                .nodeRendererFactory(new DetailTableRenderer.Factory()).attributeProviderFactory(new DetailTableAttributeProvider.Factory())
-                .build();
         String template =
                 """
                         <div
@@ -83,6 +91,50 @@ public class Doc implements ILilypadocComponent {
             @Override
             public @NotNull NodeRenderer apply(@NotNull DataHolder options) {
                 return new CopyButtonRenderer();
+            }
+        }
+    }
+
+    static class TableRender implements NodeRenderer {
+
+        @Override
+        public Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
+            return new HashSet<>(Collections.singletonList(new NodeRenderingHandler<>(TableBlock.class, this::render)));
+        }
+
+        private void render(TableBlock node, NodeRendererContext context, HtmlWriter html) {
+            String tag = "div";
+            String id = node.getChars().unescape();
+            html.srcPos(node.getChars())
+                    .withAttr().attr(Attribute.CLASS_ATTR, "antd-table").attr(Attribute.ID_ATTR, id)
+                            .tag(tag);
+//            html.srcPos(node.getText())
+//                    .append("""
+//                            <tr>
+//                                <td class="py-0">
+//                                    <label class="swap">
+//                                        <input type="checkbox" class="details-open"/>
+//                                        <div class="swap-off btn btn-xs">展开</div>
+//                                        <div class="swap-on btn btn-xs">收起</div>
+//                                    </label>
+//                                </td>
+//                            </tr>
+//                            </tbody>
+//                            """)
+//                    .withAttr()
+//                    .attr(Attribute.CLASS_ATTR, "details border-l-2 border-accent")
+//                    .attr(Attribute.STYLE_ATTR, "display: none")
+//                    .tag(tag);
+//            context.renderChildren(node);
+//            html.tag("/" + tag);
+//            html.append("<tbody>");
+        }
+
+        static class Factory implements NodeRendererFactory {
+
+            @Override
+            public @NotNull NodeRenderer apply(@NotNull DataHolder options) {
+                return new TableRender();
             }
         }
     }

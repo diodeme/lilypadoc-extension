@@ -139,17 +139,17 @@ public class SearcherIndex extends BehaviourPlugin<PageSyncFinishEvent> implemen
 
     public boolean judgeMaxPath(Integer targetSearchCateDepth, String targetSearchCateName,
                                 LilypadocContext lilypadocContext) {
+        MPath category = lilypadocContext.getLastCategory();
         Integer categoryDepth = lilypadocContext.getCategoryDepth();
         StringBuilder path = new StringBuilder();
-        MPath category = lilypadocContext.getLastCategory();
-        for (int i = categoryDepth; i > targetSearchCateDepth; i--) {
+        for (int i = categoryDepth; i >= targetSearchCateDepth; i--) {
             String name = category.getName();
             path.insert(0, name);
             category = category.getParent();
         }
         String curPath = path.toString();
         String maxPath = maxPathMap.get(targetSearchCateName);
-        if (Objects.isNull(maxPath) || maxPath.compareTo(curPath) < 0) {
+        if (Objects.isNull(maxPath) || maxPath.compareTo(curPath) <= 0) {
             maxPathMap.put(targetSearchCateName, curPath);
             return true;
         }
