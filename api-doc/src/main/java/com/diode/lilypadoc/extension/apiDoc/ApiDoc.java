@@ -2,7 +2,7 @@ package com.diode.lilypadoc.extension.apiDoc;
 
 import com.diode.lilypadoc.extension.apiDoc.domain.Doc;
 import com.diode.lilypadoc.extension.apiDoc.domain.TableData;
-import com.diode.lilypadoc.extension.apiDoc.parser.TableProcessor;
+import com.diode.lilypadoc.extension.apiDoc.parser.TablePostProcessor;
 import com.diode.lilypadoc.standard.api.IHttpCall;
 import com.diode.lilypadoc.standard.api.ILilypadocComponent;
 import com.diode.lilypadoc.standard.api.plugin.FactoryPlugin;
@@ -11,7 +11,6 @@ import com.diode.lilypadoc.standard.common.StandardErrorCodes;
 import com.diode.lilypadoc.standard.domain.LilypadocContext;
 import com.diode.lilypadoc.standard.domain.http.HttpCallContext;
 import com.diode.lilypadoc.standard.utils.JsonTool;
-import com.diode.lilypadoc.standard.utils.StringTool;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.toc.TocExtension;
@@ -20,7 +19,6 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,7 +29,7 @@ import java.util.*;
 public class ApiDoc extends FactoryPlugin implements IHttpCall {
 
     private Parser parser;
-    private TableProcessor tableProcessor;
+    private TablePostProcessor tablePostProcessor;
 
     @Override
     public void customInit() {
@@ -39,9 +37,9 @@ public class ApiDoc extends FactoryPlugin implements IHttpCall {
 
         options.set(Parser.EXTENSIONS,
                 Arrays.asList(TocExtension.create(), TablesExtension.create(), StrikethroughExtension.create()));
-        tableProcessor = TableProcessor.getInstance();
+        tablePostProcessor = TablePostProcessor.getInstance();
         // 自定义解析器配置
-        parser = Parser.builder(options).postProcessorFactory(new TableProcessor.Factory()).build();
+        parser = Parser.builder(options).postProcessorFactory(new TablePostProcessor.Factory()).build();
     }
 
     @Override
@@ -68,7 +66,7 @@ public class ApiDoc extends FactoryPlugin implements IHttpCall {
         if(Objects.isNull(id)){
             return Result.fail(StandardErrorCodes.BIZ_ERROR.of("插件ApiDoc:前端调用接口但是缺少必备参数"));
         }
-        TableData tableData = tableProcessor.getTableData(id);
+        TableData tableData = tablePostProcessor.getTableData(id);
         if(Objects.isNull(tableData)){
             return Result.fail(StandardErrorCodes.BIZ_ERROR.of("插件ApiDoc:找不到表格数据"));
         }
@@ -85,6 +83,6 @@ public class ApiDoc extends FactoryPlugin implements IHttpCall {
         Result<List<ILilypadocComponent>> process = apiDoc.process(context, new HashMap<>());
         Doc doc = (Doc) process.get().get(0);
         String string = doc.parse().parse();
-        apiDoc.tableProcessor.getTableData("");
+        apiDoc.tablePostProcessor.getTableData("");
     }
 }

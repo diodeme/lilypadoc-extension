@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class TableProcessor extends NodePostProcessor {
+public class TablePostProcessor extends NodePostProcessor {
 
     @Getter
-    private static final TableProcessor instance = new TableProcessor();
+    private static final TablePostProcessor instance = new TablePostProcessor();
 
-    private TableProcessor() {
+    private TablePostProcessor() {
         tableDataMap = new HashMap<>();
     }
 
@@ -56,7 +56,6 @@ public class TableProcessor extends NodePostProcessor {
         Node firstChild = block.getFirstChild();
         TableHead tableHead = (TableHead) firstChild;
         assert tableHead != null;
-        String headStr = tableHead.getChars().toString();
         TableRow row = (TableRow) tableHead.getFirstChild();
         assert row != null;
         List<TableData.Column> columnList = new ArrayList<>();
@@ -67,6 +66,12 @@ public class TableProcessor extends NodePostProcessor {
             column.setTitle(s);
             column.setKey(s);
             column.setDataIndex(s);
+            if(Objects.isNull(cell.getPrevious())){
+                column.setWidth("30%");
+            }
+            if(Objects.isNull(cell.getNext())){
+                column.setEllipsis(true);
+            }
             columnList.add(column);
             cell = (TableCell) cell.getNext();
         }
@@ -84,6 +89,9 @@ public class TableProcessor extends NodePostProcessor {
     }
 
     public void convertRow(int curLevel, List<Map<String, Object>> parent, Map<Integer, List<Map<String, Object>>> root, TableRow row){
+        if(Objects.isNull(row)){
+            return;
+        }
         Map<String, Object> curRowData = handleSingleRow(row);
         parent.add(curRowData);
         TableRow next = (TableRow) row.getNext();
@@ -232,7 +240,7 @@ public class TableProcessor extends NodePostProcessor {
 
         @Override
         public @NotNull NodePostProcessor apply(@NotNull Document document) {
-            return TableProcessor.getInstance();
+            return TablePostProcessor.getInstance();
         }
     }
 }

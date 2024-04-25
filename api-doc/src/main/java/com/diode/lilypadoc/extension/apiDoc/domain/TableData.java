@@ -19,5 +19,6 @@ public class TableData {
         private String dataIndex;
         private String key;
         private String width;
+        private Boolean ellipsis;
     }
 }
