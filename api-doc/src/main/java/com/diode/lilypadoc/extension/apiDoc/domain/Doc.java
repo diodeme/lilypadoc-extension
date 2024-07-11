@@ -40,6 +40,7 @@ public class Doc implements ILilypadocComponent {
         renderer = HtmlRenderer.builder(options).nodeRendererFactory(new CopyButton.CopyButtonRenderer.Factory())
 //                .nodeRendererFactory(new DetailTableRenderer.Factory()).attributeProviderFactory(new DetailTableAttributeProvider.Factory())
                 .nodeRendererFactory(new TableRender.Factory())
+                .nodeRendererFactory(new Badge.BadgeRender.Factory())
                 .build();
     }
 

@@ -74,9 +74,18 @@ public class Sidebar extends FactoryPlugin {
             childSidebar.setParent(side);
             sideBarList.add(childSidebar);
         }
+        if(sideBarList.isEmpty()){
+            return null;
+        }
         List<Side> children = ListTool.safeArrayList(sideBarList).stream().sorted(Comparator.comparing(e1 ->
                 e1.hasChild() ? "0" : "1" + e1.getTitle())).collect(Collectors.toList());
         side.setChildren(children);
         return side;
+    }
+
+    public static void main(String[] args) {
+        Sidebar sidebar = new Sidebar();
+        File file = new File("D:\\Projects\\code\\java\\lilypadoc-extension\\sidebar\\src\\main\\resources\\docs");
+        sidebar.genSides(file, MPath.of("/docs"), MPath.of("a.md"), MPath.of(""));
     }
 }

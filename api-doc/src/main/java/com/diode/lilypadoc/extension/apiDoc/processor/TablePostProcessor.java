@@ -1,4 +1,4 @@
-package com.diode.lilypadoc.extension.apiDoc.parser;
+package com.diode.lilypadoc.extension.apiDoc.processor;
 
 import com.diode.lilypadoc.extension.apiDoc.domain.DetailTable;
 import com.diode.lilypadoc.extension.apiDoc.domain.TableData;
